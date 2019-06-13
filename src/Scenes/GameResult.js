@@ -7,16 +7,27 @@ export default class GameResult extends Phaser.Scene {
     super('Result');
   }
 
+  init(data){
+    // console.log('init', data);
+    this.finalScore = data.score;
+  }
   create () {
     
     // Game
-    this.gameButton = new Button(this, config.width/2, config.height/2 - 100, 'blueButton1', 'blueButton2', 'Play', 'Game');
+    // this.scoreButton = new Button(this, config.width/2, config.height/2 - 100, 'blueButton1', 'blueButton2', 'Your Score :' + this.finalScore, 'Game');
+    // The style of the text 
+    // A lot of options are available, these are the most important ones
+    let style = { font: '20px Arial', fill: '#fff' };
 
-    // Options
-    this.optionsButton = new Button(this, config.width/2, config.height/2, 'blueButton1', 'blueButton2', 'Options', 'Options');
+    // Display the score in the top left corner
+    // Parameters: x position, y position, text, style
+    this.finalscoreText = this.add.text(config.width/2-50, config.height/2-100, 'Your Score: ' + this.finalScore, style);
+                  
+    // Game
+    this.gameButton = new Button(this, config.width/2, config.height/2, 'blueButton1', 'blueButton2', 'Replay', 'Game');
 
-    // Credits
-    this.creditsButton = new Button(this, config.width/2, config.height/2 + 100, 'blueButton1', 'blueButton2', 'Credits', 'Credits');
+    //Home
+    this.homeButton = new Button(this, config.width/2, config.height/2 + 100, 'blueButton1', 'blueButton2' , 'Menu', 'Title');
 
     this.model = this.sys.game.globals.model;
     if (this.model.musicOn === true && this.model.bgMusicPlaying === false) {

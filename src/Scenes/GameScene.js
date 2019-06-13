@@ -18,7 +18,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create () {
-    // this.add.image(400, 300, 'logo');
+
     //background
     // first create first index
     this.background = this.add
@@ -26,17 +26,15 @@ export default class GameScene extends Phaser.Scene {
       .setDepth(0)
       .setOrigin(0, 0);
 
+      
     // Parameters: x position, y position, name of the sprite
     this.player = this.physics.add.sprite(100, 100, 'player');
 
     this.player.body.gravity.y = 1000;
-    this.player.body.velocity.x = 20;
+    this.player.body.velocity.x = 10;
     this.player.body.setAllowGravity(true);
 
-
-    this.coin = this.physics.add.sprite(300, 300, 'coin');
-
-    this.pipe = this.physics.add.sprite(config.width, config.height, 'pipe');
+    
     // Store the score in a variable, initialized at 0
     this.score = 0;
 
@@ -46,10 +44,8 @@ export default class GameScene extends Phaser.Scene {
 
     // Display the score in the top left corner
     // Parameters: x position, y position, text, style
-    this.scoreText = this.add.text(20, 20, 'score: ' + this.score, style);
-
-    // for home
-    this.gameButton = new Button(this, 200, 20, 'blueButton1', 'blueButton2', 'Home', 'Title');
+    this.scoreText = this.add.text(20, 20, 'score: ' + this.score, style)
+                      .setDepth(1);
 
     //move player
     this.arrow = this.input.keyboard.createCursorKeys();
@@ -62,21 +58,22 @@ export default class GameScene extends Phaser.Scene {
     this.addPipeColumn();
 
     this.time.addEvent({
-      delay: 1500,
+      delay: 3000,
       callback: this.addPipeColumn,
       callbackScope: this,
       loop: true
     });
 
-    
-      
-
-    
+  
   }
 
   update() {
     if (this.physics.overlap(this.player, this.coin)) {
       this.hit();
+    }
+
+    if (this.physics.overlap(this.player, this.pipes)) {
+      this.playerDie();
     }
 
     if (this.arrow.right.isDown) {
@@ -94,52 +91,55 @@ export default class GameScene extends Phaser.Scene {
     if (this.jump.isDown) {
       this.jumpPlayer();
     }
-
+    // restart game if player go below the ground
     if (this.player.y > this.sys.canvas.height) {
       this.scene.restart();
     }
-
-    if (this.physics.overlap(this.player, this.pipe)) {
-      this.playerDie();
+    if (this.player.x > this.pipes.x) {
+      console.log('pass pipe');
     }
+
+    
   }
 
-  hit() {
-    this.coin.x = Phaser.Math.Between(100, 600);
-    this.coin.y = Phaser.Math.Between(100, 200);
+  // hit() {
+  //   this.coin.x = Phaser.Math.Between(100, 600);
+  //   this.coin.y = Phaser.Math.Between(100, 200);
 
-    this.score += 10;
-    this.scoreText.setText('score: ' + this.score);
+  //   this.score += 10;
+  //   this.scoreText.setText('score: ' + this.score);
 
-    // Create a new tween 
-    this.tweens.add({
-      targets: this.player, // on the player 
-      duration: 200, // for 200ms 
-      scaleX: 1.2, // that scale vertically by 20% 
-      scaleY: 1.2, // and scale horizontally by 20% 
-      yoyo: true, // at the end, go back to original scale 
-    });
-  }
+  //   // Create a new tween 
+  //   this.tweens.add({
+  //     targets: this.player, // on the player 
+  //     duration: 100, // for 200ms 
+  //     scaleX: 1.2, // that scale vertically by 20% 
+  //     scaleY: 1.2, // and scale horizontally by 20% 
+  //     yoyo: true, // at the end, go back to original scale 
+  //   });
+  // }
 
   jumpPlayer() {
-    this.player.body.velocity.y = -350;
+    this.player.body.velocity.y = -250;
   }
 
   playerDie(){
     console.log('Die');
-    this.scene.pause();
-    this.scene.launch('Result');
+    // this.scene.pause();
+    this.scene.start('Result',{ score: this.score });
   }
 
 
   addPipe(x, y) {
     const pipe = this.physics.add.image(x, y, 'pipe') 
-    pipe.body.velocity.x = -200;
-    pipe.body.setAllowGravity(false)
-    pipe.checkWorldBounds = true;
-    pipe.outOfBoundsKill = true;
+          pipe.body.velocity.x = -200;
+          pipe.body.setAllowGravity(false)
+          pipe.checkWorldBounds = true;
+          pipe.outOfBoundsKill = true;
 
    this.pipes.add(pipe);
+   
+
   }
 
   addPipeColumn() {
@@ -158,7 +158,11 @@ export default class GameScene extends Phaser.Scene {
            this.addPipe(pipeX, i * 60, 2);
          }
        }
+     
      }
+     this.score += 10;
+     this.scoreText.setText('score: ' + this.score);
+    
   }
 
 

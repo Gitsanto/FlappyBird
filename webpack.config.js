@@ -2,6 +2,8 @@
 
 const webpack = require('webpack');
 const path = require('path');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CleanWebpackPlugin = require("clean-webpack-plugin");
 
 module.exports = {
 
@@ -23,10 +25,14 @@ module.exports = {
     },
 
     plugins: [
+        // new CleanWebpackPlugin(),
         new webpack.DefinePlugin({
             'CANVAS_RENDERER': JSON.stringify(true),
             'WEBGL_RENDERER': JSON.stringify(true)
-        })
+        }),
+        new HtmlWebpackPlugin({
+            template: "./index.html"
+          })
     ]
 
 };
