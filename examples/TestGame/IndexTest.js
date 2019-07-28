@@ -1,13 +1,4 @@
-// import 'phaser';
-import config from './Config/config';
-import GameScene from './Scenes/GameScene';
-import BootScene from './Scenes/BootScene';
-import PreloaderScene from './Scenes/PreloaderScene';
-import TitleScene from './Scenes/TitleScene';
-import OptionsScene from './Scenes/OptionsScene';
-import CreditsScene from './Scenes/CreditsScene';
-import Model from './Model';
-import GameResult from './Scenes/GameResult';
+let Game = new Phaser.Scene('Game');
 
 class Game extends Phaser.Game {
   constructor () {
@@ -24,5 +15,3 @@ class Game extends Phaser.Game {
     this.scene.start('Boot');
   }
 }
-
-window.game = new Game();

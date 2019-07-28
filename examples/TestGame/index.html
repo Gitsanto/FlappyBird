@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="full-screen" content="yes"/>
   <meta name="screen-orientation" content="portrait"/>
-  <meta name="viewport" content="user-scalable=no"/>
+  <meta name="viewport" content="width = device-width, height = device-height, initial-scale=1.0" />
   <link href="css/style.css" rel="stylesheet" type="text/css"/>
 </head>
 
@@ -24,26 +24,31 @@
   <!-- endbuild -->
   <!-- Phaser.js -->
   <script src="lib/phaser-facebook-instant-games.js"></script>
+  <!-- <script src="//cdn.jsdelivr.net/npm/phaser@3.2.1/dist/phaser.js"></script> -->
+  <!-- <script src="//cdn.jsdelivr.net/npm/phaser@3.18.1/dist/phaser-facebook-instant-games.js"></script> -->
+  <!-- <script src="./Config/config.js"></script> -->
   <script src="./Object/Button.js"></script>
   <script src="./Object/Model.js"></script>
+  <script src="src/TitleScene.js"></script>
+  <script src="src/CreditsScene.js"></script>
+  <script src="src/OptionsScene.js"></script>
+  <script src="src/GameScene.js"></script>
+  <script src="src/GameResult.js"></script>
+
+
   <script type="text/javascript">
 
     const assets = [
-      'img/mock/friend1.png',
+      'img/asset1.png',
       'img/asset2.png',
       'img/asset3.png',
       'img/asset4.png'
     ];
-
-     let style = { font: '20px Arial', fill: '#fff' };
-
-     var game;
-
-    //Initialize the phaser
-    var config = {
-        type: Phaser.AUTO,
-        width: 600,
-        height: 500,
+    // our game's configuration
+    let config = {
+        type: Phaser.AUTO,  //Phaser will decide how to render our game (WebGL or Canvas)
+        width: window.innerWidth,
+        height: window.innerHeight,
         scale: 'SHOW_ALL',
         physics: { default: 'arcade' }, // The physics engine to use
         scene:{
@@ -51,9 +56,9 @@
             create: create,
             update: update
         }
-         };
-         
-
+    };
+    
+ 
     window.onload = function() {
       $('#info-section').hide();
 
@@ -65,100 +70,43 @@
           // When preloading assets, make sure to report the progress
           FBInstant.setLoadingProgress(i / assets.length * 100);
         }
-  
+
         // Now that assets are loaded, call startGameAsync
         FBInstant.startGameAsync().then(onStart);
       });
     };
-    
+
     function onStart() {
       // This is called when the user has tapped Play
       // Information from the SDK can now be accessed
-    //   $('#photo').attr('src', FBInstant.player.getPhoto());
-    //   $('#player-name').html(FBInstant.player.getName());
-    //   $('#player-id').html(FBInstant.player.getID());
-    //   $('#context-type').html(FBInstant.context.getType());
+      $('#photo').attr('src', FBInstant.player.getPhoto());
+      $('#player-name').html(FBInstant.player.getName());
+      $('#player-id').html(FBInstant.player.getID());
+      $('#context-type').html(FBInstant.context.getType());
       try{
         $('#entrypointdata').html(JSON.stringify(FBInstant.getEntryPointData()));
       }catch(e){
         console.log(e);
       }
-    //  $('#info-section').show();
-    // }
-    game = new Phaser.Game(config);
+      // $('#info-section').show();
+
+
+      // create the game, and pass it the configuration﻿
+      let game = new Phaser.Game(config);
+
     }
 
+
+    // load asset files for our game
     function preload ()
     {
-  
-
-        // display progress bar
-        var progressBar = this.add.graphics();
-        var progressBox = this.add.graphics();
-        progressBox.fillStyle(0x222222, 0.8);
-        progressBox.fillRect(240, 270, 320, 50);
-
-        var width = this.cameras.main.width;
-        var height = this.cameras.main.height;
-        var loadingText = this.make.text({
-        x: width / 2,
-        y: height / 2 - 50,
-        text: 'Loading...',
-        style: {
-        font: '20px monospace',
-        fill: '#ffffff'
-        }
-        });
-        loadingText.setOrigin(0.5, 0.5);
-
-        var percentText = this.make.text({
-                    x: width / 2,
-                    y: height / 2 - 5,
-                    text: '0%',
-                    style: {
-                    font: '18px monospace',
-                    fill: '#ffffff'
-                    }
-        });
-        percentText.setOrigin(0.5, 0.5);
-
-        var assetText = this.make.text({
-        x: width / 2,
-        y: height / 2 + 50,
-        text: '',
-        style: {
-        font: '18px monospace',
-        fill: '#ffffff'
-        }
-        });
-
-        assetText.setOrigin(0.5, 0.5);
-
-        // update progress bar
-        this.load.on('progress', function (value) {
-                percentText.setText(parseInt(value * 100) + '%');
-                progressBar.clear();
-                progressBar.fillStyle(0xffffff, 1);
-                progressBar.fillRect(250, 280, 300 * value, 30);
-        });
-
-        // update file progress text
-        this.load.on('fileprogress', function (file) {
-                assetText.setText('Loading asset: ' + file.key);
-        });
-
-        // remove progress bar when complete
-        this.load.on('complete', function () {
-                progressBar.destroy();
-                progressBox.destroy();
-                loadingText.destroy();
-                percentText.destroy();
-                assetText.destroy();
-                }.bind(this));
-
-        this.timedEvent = this.time.delayedCall(3000, this.ready, [], this);
-
-        // load assets needed in our game
+      this.scene.add('Credits',CreditsScene);
+      this.scene.add('Title',TitleScene);
+      this.scene.add('Options',OptionsScene);
+      this.scene.add('Game',GameScene);
+      this.scene.add('Result',GameResult);
+      // load images
+     // load assets needed in our game
         this.load.image('blueButton1', 'img/mock/ui/blue_button02.png');
         this.load.image('blueButton2', 'img/mock/ui/blue_button03.png');
         this.load.image('phaserLogo', 'img/mock/nevBot.png');
@@ -166,7 +114,7 @@
         this.load.image('checkedBox', 'img/mock/ui/blue_boxCheckmark.png');
         this.load.audio('bgMusic', ['img/mock/TownTheme.mp3']);
 
-        this.load.image('logo', assets[0]);
+        this.load.image('logo', 'img/mock/nevBot.png');
         // this.facebook.once('startgame', this.startGame, this);
         // add logo image
         // this.add.image(300, 200, 'logo');
@@ -175,186 +123,28 @@
         this.load.image('coin', 'img/mock/ui/coin.png');
         this.load.image('background', 'img/mock/ui/bg.png');
         this.load.image('pipe', 'img/mock/ui/pipe.png');
-
+    
+        
         }
         
 
+    // executed once, after assets were loaded
     function create ()
     {
-            // Game
-        this.gameButton = new Button(this, config.width/2, config.height/2 - 100, 'blueButton1', 'blueButton2', 'Play', 'Game');
-
-        // Options
-        this.optionsButton = new Button(this, config.width/2, config.height/2, 'blueButton1', 'blueButton2', 'Options', 'Options');
-
-        // Credits
-        this.creditsButton = new Button(this, config.width/2, config.height/2 + 100, 'blueButton1', 'blueButton2', 'Credits', 'Credits');
-        
-        // need to create class with scene relationship    
-        this.gmodel =  new  Model(this,true,true,false);
-
-        if (this.gmodel.musicOn === true && this.gmodel.bgMusicPlaying === false) {
-            this.bgMusic = this.sound.add('bgMusic', { volume: 0.5, loop: true });
-            this.bgMusic.play();
-            this.gmodel.bgMusicPlaying = true;
-            this.gmodel.bgMusic = this.bgMusic;
-        }
-
-        //background
-    // first create first index
-    this.background = this.add
-      .tileSprite(0, 0, config.width,config.height, "background")
-      .setDepth(0)
-      .setOrigin(0, 0);
-
-      
-    // Parameters: x position, y position, name of the sprite
-    this.player = this.physics.add.sprite(100, 100, 'player');
-
-    this.player.body.gravity.y = 1000;
-    this.player.body.velocity.x = 10;
-    this.player.body.setAllowGravity(true);
-
-    
-    // Store the score in a variable, initialized at 0
-    this.score = 0;
-
-    // The style of the text 
-    // A lot of options are available, these are the most important ones
-    // let style = { font: '20px Arial', fill: '#fff' };
-
-    // Display the score in the top left corner
-    // Parameters: x position, y position, text, style
-    this.scoreText = this.add.text(20, 20, 'score: ' + this.score, style)
-                      .setDepth(1);
-
-    //move player
-    this.arrow = this.input.keyboard.createCursorKeys();
-    this.jump = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
-
-    //pipe
-    this.pipes = this.add.group();
-
-    // Timer that create or spawn pipe
-    // this.addPipeColumn();
-
-    this.time.addEvent({
-      delay: 3000,
-      callback: this.addPipeColumn,
-      callbackScope: this,
-      loop: true
-    });
-
-    function centerButton (gameObject, offset = 0) {
-        Phaser.Display.Align.In.Center(
-        gameObject,
-        this.add.zone(config.width/2, config.height/2 - offset * 100, config.width, config.height)
-        );
-    }
-
-
-    function centerButtonText (gameText, gameButton) {
-        Phaser.Display.Align.In.Center(
-        gameText,
-        gameButton
-        );
-    }
-
-
-    // this.addPipeColumn();
+      this.scene.start('Title');
 
     }
-    
-  
 
     function update ()
-    {
-        
-        // this.scene.start('Preloader');
-    if (this.physics.overlap(this.player, this.coin)) {
-      this.hit();
-    }
+      {
 
-    if (this.physics.overlap(this.player, this.pipes)) {
-      this.playerDie();
-    }
-
-    if (this.arrow.right.isDown) {
-      this.player.x += 3;
-    } else if (this.arrow.left.isDown) {
-      this.player.x -= 3;
-    } 
-
-    if (this.arrow.down.isDown) {
-      this.player.y += 3;
-    } else if (this.arrow.up.isDown) {
-      this.player.y -= 3;
-    } 
-    // jump
-    if (this.jump.isDown) {
-      jumpPlayer();
-    }
-    // restart game if player go below the ground
-    if (this.player.y > this.sys.canvas.height) {
-      this.scene.restart();
-    }
-    if (this.player.x > this.pipes.x) {
-      console.log('pass pipe');
-    }
-
-    function jumpPlayer() {
-        this.player.body.velocity.y = -250;
-  }
-
-  function playerDie(){
-    console.log('Die');
-    // this.scene.pause();
-    this.scene.start('Result',{ score: this.score });
-  }
-
-   function addPipe(x, y) {
-    const pipe = this.physics.add.image(x, y, 'pipe') 
-          pipe.body.velocity.x = -200;
-          pipe.body.setAllowGravity(false)
-          pipe.checkWorldBounds = true;
-          pipe.outOfBoundsKill = true;
-   this.pipes.add(pipe);
-  }
-
-
-
-  function addPipeColumn() {
-     // randomly pick a number between 1 and 5
-     let hole = Math.floor(Math.random() * 5) + 1;
-     let pipeX = config.width;
-
-     // add 6 pipes with one big hole at position hole and hole + 1
-     for (let i = 0; i < 10; i++) {
-       if (i !== hole && i !== hole + 1 && i !== hole + 2) {
-         if (i === hole - 1) {
-           this.addPipe(pipeX, i * 60, 0);
-         } else if (i === hole + 3) {
-           this.addPipe(pipeX, i * 60, 1);
-         } else {
-           this.addPipe(pipeX, i * 60, 2);
-         }
-       }
-     }
-     this.score += 10;
-     this.scoreText.setText('score: ' + this.score);  
-    } 
-
-  }
-
-
-
-
-
+      // background
+      //this.add.sprite(0, 0, 'background');
+      }
   </script>
 
   <header>
-    <h1>Instant Games Demos</h1>
-    <h2>TestGameDemo!</h2>
+    <h2>Danfe Bird</h2>
   </header>
 
   <section id="info-section">

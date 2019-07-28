@@ -1,8 +1,5 @@
-import 'phaser';
-import config from '../Config/config';
-import Button from '../Objects/Button';
 
-export default class GameScene extends Phaser.Scene {
+class GameScene extends Phaser.Scene {
   constructor () {
     super('Game');
   }
@@ -26,7 +23,7 @@ export default class GameScene extends Phaser.Scene {
       .setDepth(0)
       .setOrigin(0, 0);
 
-      
+    console.log(config.height);  
     // Parameters: x position, y position, name of the sprite
     this.player = this.physics.add.sprite(100, 100, 'player');
 
@@ -37,7 +34,7 @@ export default class GameScene extends Phaser.Scene {
     
     // Store the score in a variable, initialized at 0
     this.score = 0;
-
+  
     // The style of the text 
     // A lot of options are available, these are the most important ones
     let style = { font: '20px Arial', fill: '#fff' };
@@ -50,7 +47,9 @@ export default class GameScene extends Phaser.Scene {
     //move player
     this.arrow = this.input.keyboard.createCursorKeys();
     this.jump = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
-
+    //this.touchjump = this.input.onDown.add(this.jumpPlayer,this);
+    //for touch control 
+    this.pointer = this.input.activePointer;
     //pipe
     this.pipes = this.add.group();
 
@@ -88,7 +87,7 @@ export default class GameScene extends Phaser.Scene {
       this.player.y -= 3;
     } 
     // jump
-    if (this.jump.isDown) {
+    if (this.jump.isDown || this.pointer.isDown) {
       this.jumpPlayer();
     }
     // restart game if player go below the ground
